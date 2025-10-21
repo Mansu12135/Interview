@@ -2,25 +2,31 @@
 <ng-template #nodes let-node="node">
     @switch (node.type) {
         @case (TreeNodeType.Node) {
-            <ng-container [ngTemplateOutletContext]="{node: node}" [ngTemplateOutlet]="nodeTemplate"></ng-container>
+            <ng-container [ngTemplateOutletContext]="{node: node}" [ngTemplateOutletInjector]="node.injector"
+                          [ngTemplateOutlet]="nodeTemplate"></ng-container>
         }
         @case (TreeNodeType.Leaf) {
-            <ng-container [ngTemplateOutletContext]="{leaf: node}" [ngTemplateOutlet]="leafTemplate"></ng-container>
+            <ng-container [ngTemplateOutletContext]="{leaf: node}" [ngTemplateOutletInjector]="node.injector"
+                          [ngTemplateOutlet]="leafTemplate"></ng-container>
         }
     }
 </ng-template>
 <ng-template #nodeTemplate let-node="node">
-    <div (click)="toggleNodeHighlighting(node.name, $event)" class="element">
-        <strong [class.highlighted]="node.isHighlighted">{{ node.name }}</strong>
-        @for (child of node["children"]; track child.name) {
-            <ng-container [ngTemplateOutletContext]="{node: child}" [ngTemplateOutlet]="nodes"></ng-container>
-        }
-    </div>
+    <colored-content>
+        <div (click)="toggleNodeHighlighting(node.name, $event)" class="element">
+            <strong [class.highlighted]="node.isHighlighted">{{ node.name }}</strong>
+            @for (child of node["children"]; track child.name) {
+                <ng-container [ngTemplateOutletContext]="{node: child}" [ngTemplateOutlet]="nodes"></ng-container>
+            }
+        </div>
+    </colored-content>
 </ng-template>
 
 <ng-template #leafTemplate let-leaf="leaf">
-    <div (click)="toggleNodeHighlighting(leaf.name, $event)" class="element">
-        <i (click)="toggleNodeHighlighting(leaf.name, $event)" [class.highlighted]="leaf.isHighlighted"
-           class="element">{{ leaf.name }}</i>
-    </div>
+    <colored-content>
+        <div (click)="toggleNodeHighlighting(leaf.name, $event)" class="element">
+            <i [class.highlighted]="leaf.isHighlighted"
+               class="element">{{ leaf.name }}</i>
+        </div>
+    </colored-content>
 </ng-template>
