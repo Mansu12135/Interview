@@ -1,9 +1,14 @@
 import {Component, OnInit} from '@angular/core';
 import {CommonModule} from '@angular/common';
-import {HttpClient} from '@angular/common/http';
-import {BehaviorSubject, catchError, delay, finalize, Observable, of, shareReplay} from 'rxjs';
-import {TreeNode} from './models/tree-node';
+import {
+    BehaviorSubject, combineLatest,
+    EMPTY, map,
+    Observable,
+    Subject
+} from 'rxjs';
+import { TreeNode as TreeNodeDto } from "./models/tree-node";
 import {TreeNodeComponent} from './tree-node/tree-node.component';
+import { DataProviderService } from "./data-provider.service";
 
 @Component({
     selector: 'app-root',
@@ -13,26 +18,48 @@ import {TreeNodeComponent} from './tree-node/tree-node.component';
     styleUrls: ['./app.component.css']
 })
 export class AppComponent implements OnInit {
+    private readonly _highlightedNodesSubject$: BehaviorSubject<Set<string>> = new BehaviorSubject<Set<string>>(new Set<string>());
+
     title = 'Tree Viewer';
 
-    tree$!: Observable<TreeNode | null>;
+    tree$: Observable<TreeNode> = EMPTY;
     loading$ = new BehaviorSubject<boolean>(true);
     error$ = new BehaviorSubject<string | null>(null);
 
-    constructor(private http: HttpClient) {
-    }
+    constructor(private readonly _dataProvider: DataProviderService) {}
 
     ngOnInit(): void {
-        const url = 'http://localhost:5000/api/tree';
-        this.tree$ = this.http.get<TreeNode>(url).pipe(
-            delay(1000),
-            shareReplay(1),
-            finalize(() => this.loading$.next(false)),
-            catchError(err => {
-                console.error(err);
-                this.error$.next('Failed to load tree');
-                return of(null);
-            })
-        );
+        const tree$: Observable<TreeNodeDto> = this._dataProvider.tree$;
+        this.tree$ = combineLatest([tree$, this._highlightedNodesSubject$])
+            .pipe(map(([tree, highlightedNodes]: [TreeNodeDto, Set<string>]) => this.buildTreeNode(tree, highlightedNodes)))
     }
+
+    protected nodeClicked(name: string): void {
+        const highlightedNodes: Set<string> = this._highlightedNodesSubject$.value;
+        if (highlightedNodes.delete(name)) {
+            return;
+        }
+        highlightedNodes.add(name);
+    }
+
+    private buildTreeNode(node: TreeNodeDto, highlightedNodes: Set<string>): TreeNode {
+        return {
+            name: node.name,
+            type: node.children?.length ? TreeNodeType.Node : TreeNodeType.Leaf,
+            isHighlighted: highlightedNodes.has(node.name),
+            children: node.children?.map((child: TreeNodeDto) => this.buildTreeNode(child, highlightedNodes))
+        }
+    }
+}
+
+type TreeNode = {
+    type: TreeNodeType
+    name: string;
+    isHighlighted: boolean;
+    children?: TreeNode[];
+}
+
+enum TreeNodeType {
+    Node = 0,
+    Leaf = 1
 }
