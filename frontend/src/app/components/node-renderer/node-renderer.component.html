@@ -1,0 +1,20 @@
+<ng-container [ngTemplateOutlet]="nodes" [ngTemplateOutletContext]="{node: tree}"></ng-container>
+<ng-template #nodes let-node="node">@switch (node.type) {
+    @case (TreeNodeType.Node) {
+        <ng-container [ngTemplateOutlet]="node" [ngTemplateOutletContext]="{node: node}"></ng-container>
+    }
+    @case (TreeNodeType.Leaf) {
+        <ng-container [ngTemplateOutlet]="leaf" [ngTemplateOutletContext]="{leaf: node}"></ng-container>
+    }
+}
+</ng-template>
+<ng-template #node let-node="node">
+    {{node.name}}
+    @for (child of node["children"]; track child.name) {
+        <ng-container [ngTemplateOutlet]="nodes" [ngTemplateOutletContext]="{node: child}"></ng-container>
+    }
+</ng-template>
+
+<ng-template #leaf let-leaf="leaf">
+    <strong>{{ leaf.name }}</strong>
+</ng-template>

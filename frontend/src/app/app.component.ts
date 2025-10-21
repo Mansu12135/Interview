@@ -1,19 +1,16 @@
-import {Component, OnInit} from '@angular/core';
-import {CommonModule} from '@angular/common';
-import {
-    BehaviorSubject, combineLatest,
-    EMPTY, map,
-    Observable,
-    Subject
-} from 'rxjs';
+import { Component, OnInit } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { BehaviorSubject, combineLatest, EMPTY, map, Observable } from 'rxjs';
 import { TreeNode as TreeNodeDto } from "./models/tree-node";
-import {TreeNodeComponent} from './tree-node/tree-node.component';
 import { DataProviderService } from "./data-provider.service";
+import { TreeNode } from "./tree-node";
+import { TreeNodeType } from "./tree-node-type";
+import { NodeRendererComponent } from "./components/node-renderer/node-renderer.component";
 
 @Component({
     selector: 'app-root',
     standalone: true,
-    imports: [CommonModule, TreeNodeComponent],
+    imports: [CommonModule, NodeRendererComponent],
     templateUrl: './app.component.html',
     styleUrls: ['./app.component.css']
 })
@@ -52,14 +49,3 @@ export class AppComponent implements OnInit {
     }
 }
 
-type TreeNode = {
-    type: TreeNodeType
-    name: string;
-    isHighlighted: boolean;
-    children?: TreeNode[];
-}
-
-enum TreeNodeType {
-    Node = 0,
-    Leaf = 1
-}

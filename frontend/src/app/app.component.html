@@ -1,5 +1,5 @@
 <main>
-  <h1>Tree Viewer</h1>
+  <h1>{{title}}</h1>
   @if (loading$ | async) {
     <p>Loading tree...</p>
   }
@@ -7,6 +7,6 @@
     <p class="error">{{ err }}</p>
   }
   @if (tree$ | async; as tree) {
-    <app-tree-node [node]="tree"></app-tree-node>
+     <node-renderer [tree]="tree"></node-renderer>
   }
 </main>
