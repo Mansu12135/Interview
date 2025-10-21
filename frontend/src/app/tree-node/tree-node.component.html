@@ -1,0 +1,8 @@
+<ul *ngIf="node as n">
+  <li>
+    <strong>{{ n.name }}</strong>
+    <ng-container *ngIf="n.children?.length">
+      <app-tree-node *ngFor="let c of n.children" [node]="c"></app-tree-node>
+    </ng-container>
+  </li>
+</ul>
