@@ -1,11 +1,12 @@
-import { Component, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { BehaviorSubject, combineLatest, EMPTY, map, Observable } from 'rxjs';
-import { TreeNode as TreeNodeDto } from "./models/tree-node";
-import { DataProviderService } from "./data-provider.service";
-import { TreeNode } from "./tree-node";
-import { TreeNodeType } from "./tree-node-type";
-import { NodeRendererComponent } from "./components/node-renderer/node-renderer.component";
+import {Component, OnInit} from '@angular/core';
+import {CommonModule} from '@angular/common';
+import {BehaviorSubject, combineLatest, EMPTY, finalize, map, Observable} from 'rxjs';
+import {TreeNode as TreeNodeDto} from "./models/tree-node";
+import {DataProviderService} from "./data-provider.service";
+import {TreeNode} from "./tree-node";
+import {TreeNodeType} from "./tree-node-type";
+import {NodeRendererComponent} from "./components/node-renderer/node-renderer.component";
+import {HighlightService} from "./highlight.service";
 
 @Component({
     selector: 'app-root',
@@ -15,28 +16,25 @@ import { NodeRendererComponent } from "./components/node-renderer/node-renderer.
     styleUrls: ['./app.component.css']
 })
 export class AppComponent implements OnInit {
-    private readonly _highlightedNodesSubject$: BehaviorSubject<Set<string>> = new BehaviorSubject<Set<string>>(new Set<string>());
-
     title = 'Tree Viewer';
-
     tree$: Observable<TreeNode> = EMPTY;
     loading$ = new BehaviorSubject<boolean>(true);
     error$ = new BehaviorSubject<string | null>(null);
 
-    constructor(private readonly _dataProvider: DataProviderService) {}
+    constructor(
+        private readonly _dataProvider: DataProviderService,
+        private readonly _highlight: HighlightService
+    ) {
+    }
 
     ngOnInit(): void {
-        const tree$: Observable<TreeNodeDto> = this._dataProvider.tree$;
-        this.tree$ = combineLatest([tree$, this._highlightedNodesSubject$])
+        const tree$: Observable<TreeNodeDto> = this._dataProvider.tree$.pipe(finalize(() => this.loading$.next(false)));
+        this.tree$ = combineLatest([tree$, this._highlight.highlightedNodes$])
             .pipe(map(([tree, highlightedNodes]: [TreeNodeDto, Set<string>]) => this.buildTreeNode(tree, highlightedNodes)))
     }
 
     protected nodeClicked(name: string): void {
-        const highlightedNodes: Set<string> = this._highlightedNodesSubject$.value;
-        if (highlightedNodes.delete(name)) {
-            return;
-        }
-        highlightedNodes.add(name);
+        this._highlight.toggle(name);
     }
 
     private buildTreeNode(node: TreeNodeDto, highlightedNodes: Set<string>): TreeNode {

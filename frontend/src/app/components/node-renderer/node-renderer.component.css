@@ -1,3 +1,8 @@
 .element {
     margin-left: 1rem;
+    cursor: pointer;
+}
+
+.highlighted {
+    background-color: bisque;
 }

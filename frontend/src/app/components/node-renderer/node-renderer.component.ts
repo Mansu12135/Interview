@@ -1,7 +1,8 @@
-import { Component, Input } from '@angular/core';
-import { TreeNode } from "../../tree-node";
-import { NgTemplateOutlet } from "@angular/common";
-import { TreeNodeType } from "../../tree-node-type";
+import {Component, Input} from '@angular/core';
+import {TreeNode} from "../../tree-node";
+import {NgTemplateOutlet} from "@angular/common";
+import {TreeNodeType} from "../../tree-node-type";
+import {HighlightService} from "../../highlight.service";
 
 @Component({
     selector: 'node-renderer',
@@ -16,4 +17,12 @@ export class NodeRendererComponent {
     @Input() public tree!: TreeNode;
 
     protected readonly TreeNodeType = TreeNodeType;
+
+    constructor(private readonly _highlight: HighlightService) {
+    }
+
+    toggleNodeHighlighting(name: string, e: PointerEvent) {
+        this._highlight.toggle(name);
+        e.stopPropagation();
+    }
 }
