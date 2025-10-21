@@ -1,8 +1,12 @@
 <main>
-    <h1>Tree Viewer</h1>
-    <p *ngIf="loading$ | async">Loading tree...</p>
-    <p *ngIf="(error$ | async) as err" class="error">{{ err }}</p>
-    <ng-container *ngIf="(tree$ | async) as tree">
-        <app-tree-node [node]="tree"></app-tree-node>
-    </ng-container>
+  <h1>Tree Viewer</h1>
+  @if (loading$ | async) {
+    <p>Loading tree...</p>
+  }
+  @if (error$ | async; as err) {
+    <p class="error">{{ err }}</p>
+  }
+  @if (tree$ | async; as tree) {
+    <app-tree-node [node]="tree"></app-tree-node>
+  }
 </main>

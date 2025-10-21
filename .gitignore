@@ -129,9 +129,9 @@ pnpm-debug.log*
 *.tsbuildinfo
 
 # Optional: lock files (keep if your team wants to commit)
-# package-lock.json
-# yarn.lock
-# pnpm-lock.yaml
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
 
 # =====================
 # Frontend framework specifics

@@ -1,7 +1,6 @@
 {
   "$schema": "https://json.schemastore.org/angular-cli",
   "version": 1,
-  "defaultProject": "tree-frontend",
   "projects": {
     "tree-frontend": {
       "projectType": "application",
@@ -44,10 +43,10 @@
           "builder": "@angular-devkit/build-angular:dev-server",
           "configurations": {
             "production": {
-              "browserTarget": "tree-frontend:build:production"
+              "buildTarget": "tree-frontend:build:production"
             },
             "development": {
-              "browserTarget": "tree-frontend:build:development",
+              "buildTarget": "tree-frontend:build:development",
               "port": 4200
             }
           },
