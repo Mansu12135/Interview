@@ -1,7 +1,7 @@
 import {Component, Input} from '@angular/core';
-import {TreeNode} from "../../tree-node";
+import {TreeNode} from "../../models/tree-node";
 import {NgTemplateOutlet} from "@angular/common";
-import {TreeNodeType} from "../../tree-node-type";
+import {TreeNodeType} from "../../models/tree-node-type";
 import {HighlightService} from "../../highlight.service";
 import {ColoredContent} from "../colored-content/colored-content";
 
