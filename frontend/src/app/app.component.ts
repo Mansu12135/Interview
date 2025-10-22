@@ -1,7 +1,8 @@
 import {Component, Injector, OnInit} from '@angular/core';
 import {CommonModule} from '@angular/common';
-import {BehaviorSubject, EMPTY, finalize, map, Observable} from 'rxjs';
-import {TreeNode as TreeNodeDto, TreeNode} from "./models/tree-node";
+import {BehaviorSubject, combineLatest, EMPTY, finalize, map, Observable, of, switchMap} from 'rxjs';
+import {TreeNode as TreeNodeDto} from "./dtos/tree-node";
+import {TreeNode} from "./models/tree-node";
 import {DataProviderService} from "./data-provider.service";
 import {TreeNodeType} from "./models/tree-node-type";
 import {NodeRendererComponent} from "./components/node-renderer/node-renderer.component";
@@ -31,24 +32,34 @@ export class AppComponent implements OnInit {
     }
 
     ngOnInit(): void {
-        const tree$: Observable<TreeNodeDto> = this._dataProvider.tree$.pipe(finalize(() => this.loading$.next(false)));
-        this.tree$ = tree$
-            .pipe(map((tree: TreeNode) => this.buildTreeNode(tree)))
+        const treeDto$: Observable<TreeNodeDto> = this._dataProvider.tree$.pipe(finalize(() => this.loading$.next(false)));
+        this.tree$ = treeDto$.pipe(
+            switchMap((tree: TreeNodeDto) => this.buildTreeNode$(tree))
+        );
     }
 
-    private buildTreeNode(node: TreeNodeDto): TreeNode {
-        return {
-            name: node.name,
-            type: node.children?.length ? TreeNodeType.Node : TreeNodeType.Leaf,
-            isHighlighted: this._highlight.isHighlighted(node.name),
-            children: node.children?.map((child: TreeNodeDto) => this.buildTreeNode(child)),
-            injector: Injector.create({
-                parent: this.injector,
-                providers: [
-                    {provide: COLOR, useValue: this._color.getRandomColor()}
-                ]
-            })
-        }
+    private buildTreeNode$(node: TreeNodeDto): Observable<TreeNode> {
+        const childrenDtos: TreeNodeDto[] = node.children ?? [];
+        const isNode = !!childrenDtos.length;
+
+        const children$: Observable<TreeNode[]> = isNode
+            ? combineLatest(childrenDtos.map((child: TreeNodeDto) => this.buildTreeNode$(child)))
+            : of([] as TreeNode[]);
+
+        return combineLatest([this._highlight.isHighlighted(node.name), children$]).pipe(
+            map(([isHighlighted, children]: [boolean, TreeNode[]]) => ({
+                name: node.name,
+                type: isNode ? TreeNodeType.Node : TreeNodeType.Leaf,
+                isHighlighted,
+                children,
+                injector: Injector.create({
+                    parent: this.injector,
+                    providers: [
+                        {provide: COLOR, useValue: this._color.getRandomColor()}
+                    ]
+                })
+            }))
+        );
     }
 }
 

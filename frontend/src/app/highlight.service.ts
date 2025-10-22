@@ -1,5 +1,5 @@
 import {Injectable} from '@angular/core';
-import {BehaviorSubject} from 'rxjs';
+import {BehaviorSubject, Observable, map, distinctUntilChanged} from 'rxjs';
 
 @Injectable({
     providedIn: 'root'
@@ -7,9 +7,12 @@ import {BehaviorSubject} from 'rxjs';
 export class HighlightService {
     private readonly _highlightedNodesSubject$ = new BehaviorSubject<Set<string>>(new Set<string>());
 
-    // Check whether a node is currently highlighted
-    public isHighlighted(name: string): boolean {
-        return this._highlightedNodesSubject$.value.has(name);
+    // Observable that emits whether a node is currently highlighted
+    public isHighlighted(name: string): Observable<boolean> {
+        return this._highlightedNodesSubject$.pipe(
+            map(set => set.has(name)),
+            distinctUntilChanged()
+        );
     }
 
     public toggle(name: string): void {

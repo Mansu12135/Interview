@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { delay, Observable, shareReplay } from "rxjs";
-import { TreeNode } from "./models/tree-node";
+import { TreeNode as TreeNodeDto } from "./dtos/tree-node";
 import { HttpClient } from "@angular/common/http";
 
 @Injectable({
@@ -11,10 +11,10 @@ export class DataProviderService {
 
   constructor(private readonly _http: HttpClient) { }
 
-  tree$: Observable<TreeNode> = this.getTree$();
+  tree$: Observable<TreeNodeDto> = this.getTree$();
 
-  private getTree$(): Observable<TreeNode> {
-    return this._http.get<TreeNode>(DataProviderService._url).pipe(
+  private getTree$(): Observable<TreeNodeDto> {
+    return this._http.get<TreeNodeDto>(DataProviderService._url).pipe(
         delay(1000),
         shareReplay(1));
   }
