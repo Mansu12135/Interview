@@ -1,6 +1,6 @@
 import {Component, Injector, OnInit} from '@angular/core';
 import {CommonModule} from '@angular/common';
-import {BehaviorSubject, combineLatest, EMPTY, finalize, map, Observable, of, switchMap} from 'rxjs';
+import {BehaviorSubject, combineLatest, EMPTY, map, Observable, of, switchMap, tap} from 'rxjs';
 import {TreeNode as TreeNodeDto} from "./dtos/tree-node";
 import {TreeNode} from "./models/tree-node";
 import {DataProviderService} from "./data-provider.service";
@@ -9,11 +9,12 @@ import {NodeRendererComponent} from "./components/node-renderer/node-renderer.co
 import {HighlightService} from "./highlight.service";
 import {ColorService} from "./color.service";
 import {COLOR} from "./tokens/color.token";
+import {FormsModule} from "@angular/forms";
 
 @Component({
     selector: 'app-root',
     standalone: true,
-    imports: [CommonModule, NodeRendererComponent],
+    imports: [CommonModule, NodeRendererComponent, FormsModule],
     templateUrl: './app.component.html',
     styleUrls: ['./app.component.css']
 })
@@ -22,6 +23,14 @@ export class AppComponent implements OnInit {
     tree$: Observable<TreeNode> = EMPTY;
     loading$ = new BehaviorSubject<boolean>(true);
     error$ = new BehaviorSubject<string | null>(null);
+
+    // Extend form model
+    extendTitle = '';
+    extendValue: number | null = null;
+    extending$ = new BehaviorSubject<boolean>(false);
+
+    // Expose highlighted id to the template
+    highlightedId$ = this._highlight.getHighlightedId();
 
     constructor(
         private readonly _dataProvider: DataProviderService,
@@ -32,10 +41,46 @@ export class AppComponent implements OnInit {
     }
 
     ngOnInit(): void {
-        const treeDto$: Observable<TreeNodeDto> = this._dataProvider.tree$.pipe(finalize(() => this.loading$.next(false)));
+        const treeDto$: Observable<TreeNodeDto> = this._dataProvider.tree$.pipe(
+            tap(() => this.loading$.next(false))
+        );
         this.tree$ = treeDto$.pipe(
             switchMap((tree: TreeNodeDto) => this.buildTreeNode$(tree))
         );
+    }
+
+    onExtend(selectedId: number | null): void {
+        this.error$.next(null);
+        const title = this.extendTitle?.trim();
+        if (!title) {
+            this.error$.next('Title is required');
+            return;
+        }
+        if (this.extendValue === null || this.extendValue === undefined || Number.isNaN(this.extendValue as any)) {
+            this.error$.next('Value is required');
+            return;
+        }
+
+        // Guard: should be disabled in template, but keep a safety check
+        if (selectedId === null || selectedId === undefined) {
+            this.error$.next('Please select a parent node first.');
+            return;
+        }
+
+        this.extending$.next(true);
+        const payload: any = {title, value: this.extendValue, parentId: selectedId};
+        this._dataProvider.extendTree(payload).subscribe({
+            next: () => {
+                this.extending$.next(false);
+                // clear only title by default, keep value for rapid input
+                this.extendTitle = '';
+            },
+            error: (err) => {
+                this.extending$.next(false);
+                const msg = typeof err?.error === 'string' ? err.error : 'Failed to extend the tree';
+                this.error$.next(msg);
+            }
+        });
     }
 
     private buildTreeNode$(node: TreeNodeDto): Observable<TreeNode> {

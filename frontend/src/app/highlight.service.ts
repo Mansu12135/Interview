@@ -1,5 +1,5 @@
 import {Injectable} from '@angular/core';
-import {BehaviorSubject, Observable, map, distinctUntilChanged} from 'rxjs';
+import {BehaviorSubject, distinctUntilChanged, map, Observable} from 'rxjs';
 
 @Injectable({
     providedIn: 'root'
@@ -20,6 +20,10 @@ export class HighlightService {
     public toggle(id: number): void {
         const current = this._selectedId$.value;
         this._selectedId$.next(current === id ? null : id);
+    }
+
+    public getHighlightedId(): Observable<number | null> {
+        return this._selectedId$.asObservable().pipe(distinctUntilChanged());
     }
 
     public clear(): void {

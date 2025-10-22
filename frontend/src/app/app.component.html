@@ -1,14 +1,36 @@
 <main>
-  <header class="app-header">
-    <h1 class="app-title">{{title}}</h1>
-  </header>
-  @if (loading$ | async) {
-    <p>Loading tree...</p>
-  }
-  @if (error$ | async; as err) {
-    <p class="error">{{ err }}</p>
-  }
-  @if (tree$ | async; as tree) {
-     <node-renderer [tree]="tree"></node-renderer>
-  }
+    <header class="app-header">
+        <div class="header-inner">
+            <h1 class="app-title">{{ title }}</h1>
+            @let selectedId = highlightedId$ | async;
+            <form (submit)="onExtend(selectedId); $event.preventDefault()" class="extend-form">
+                <label>
+                    Title
+                    <input [(ngModel)]="extendTitle" name="title" placeholder="New node title" required
+                           type="text"/>
+                </label>
+                <label>
+                    Value
+                    <input [(ngModel)]="extendValue" name="value" placeholder="Enter value" required type="number"/>
+                </label>
+                <button [disabled]="(extending$ | async) || !extendTitle?.trim() || extendValue === null || extendValue === undefined || (selectedId === null)"
+                        type="submit">
+                    @if (extending$ | async) {
+                        Adding...
+                    } @else {
+                        Add
+                    }
+                </button>
+            </form>
+        </div>
+    </header>
+    @if (loading$ | async) {
+        <p>Loading tree...</p>
+    }
+    @if (error$ | async; as err) {
+        <p class="error">{{ err }}</p>
+    }
+    @if (tree$ | async; as tree) {
+        <node-renderer [tree]="tree"></node-renderer>
+    }
 </main>

@@ -16,6 +16,13 @@ main {
     box-shadow: 0 1px 0 rgba(0, 0, 0, 0.15);
 }
 
+.header-inner {
+    display: flex;
+    align-items: flex-end;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+}
+
 .app-title {
     margin: 0 0 0 1rem;
     font-size: clamp(1.25rem, 2vw + 1rem, 2rem);
@@ -38,6 +45,53 @@ main {
     border-radius: 999px;
     background: linear-gradient(90deg, #64748b, #60a5fa, #6366f1);
     opacity: 0.7;
+}
+
+.extend-form {
+    margin-left: auto;
+    display: flex;
+    align-items: flex-end;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+}
+
+.extend-form label {
+    color: #cbd5e1;
+    font-size: 0.85rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+}
+
+.extend-form input {
+    padding: 0.25rem 0.5rem;
+    border-radius: 6px;
+    border: 1px solid #94a3b8;
+    background: rgba(15, 23, 42, 0.2);
+    color: #e5e7eb;
+}
+/* Hide up/down arrows on number inputs */
+.extend-form input[type="number"]::-webkit-outer-spin-button,
+.extend-form input[type="number"]::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+.extend-form input[type="number"] {
+    -moz-appearance: textfield;
+}
+
+.extend-form button[type="submit"] {
+    padding: 0.45rem 0.9rem;
+    border-radius: 6px;
+    border: 1px solid transparent;
+    background: #6366f1;
+    color: white;
+    cursor: pointer;
+}
+
+.extend-form button[disabled] {
+    opacity: 0.6;
+    cursor: not-allowed;
 }
 
 .error {

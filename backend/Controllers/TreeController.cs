@@ -1,13 +1,86 @@
 using Microsoft.AspNetCore.Mvc;
+using System.ComponentModel.DataAnnotations;
 
 namespace TreeApi.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
 public class TreeController : ControllerBase {
+    private static readonly object _lock = new();
+    private static TreeNode? _root;
+    private static int _nextId;
+
     [HttpGet]
     public ActionResult<TreeNode> Get() {
-        var tree = new TreeNode {
+        EnsureInitialized();
+        return Ok(_root);
+    }
+
+    [HttpPost("extend")]
+    public ActionResult<TreeNode> Extend([FromBody] ExtendTreeRequest request) {
+        if (request == null || string.IsNullOrWhiteSpace(request.Title)) {
+            return BadRequest("Title is required.");
+        }
+        if (!ModelState.IsValid) {
+            return BadRequest("Value is required.");
+        }
+
+        lock (_lock) {
+            EnsureInitialized();
+
+            int parentId = request.ParentId ?? _root!.Id;
+            var parent = FindNodeById(_root!, parentId);
+            if (parent == null) {
+                return NotFound($"Parent with id {parentId} not found.");
+            }
+
+            parent.Children ??= new List<TreeNode>();
+            var newNode = new TreeNode {
+                Id = _nextId++,
+                Title = request.Title,
+                Value = request.Value
+            };
+            parent.Value = null;
+            parent.Children.Add(newNode);
+
+            return Ok(_root);
+        }
+    }
+
+    private static void EnsureInitialized() {
+        if (_root != null) return;
+        lock (_lock) {
+             if (_root != null) return;
+            var tree = BuildInitialTree();
+            _root = tree;
+            _nextId = GetMaxId(tree) + 1;
+        }
+    }
+
+    private static TreeNode? FindNodeById(TreeNode node, int id) {
+        if (node.Id == id) return node;
+        if (node.Children != null) {
+            foreach (var child in node.Children) {
+                var found = FindNodeById(child, id);
+                if (found != null) return found;
+            }
+        }
+        return null;
+    }
+
+    private static int GetMaxId(TreeNode node) {
+        int max = node.Id;
+        if (node.Children != null) {
+            foreach (var child in node.Children) {
+                int childMax = GetMaxId(child);
+                if (childMax > max) max = childMax;
+            }
+        }
+        return max;
+    }
+
+    private static TreeNode BuildInitialTree() {
+        return new TreeNode {
             Id = 1, Title = "Budget",
             Children = [
                 new TreeNode {
@@ -94,8 +167,13 @@ public class TreeController : ControllerBase {
                 }
             ]
         };
+    }
 
-        return Ok(tree);
+    public class ExtendTreeRequest {
+        public int? ParentId { get; set; }
+        public string Title { get; set; }
+        [Required]
+        public int? Value { get; set; }
     }
 }
 
