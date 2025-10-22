@@ -28,10 +28,9 @@ public class TreeController : ControllerBase {
         lock (_lock) {
             EnsureInitialized();
 
-            int parentId = request.ParentId ?? _root!.Id;
-            var parent = FindNodeById(_root!, parentId);
+            var parent = FindNodeById(_root!, request.ParentId);
             if (parent == null) {
-                return NotFound($"Parent with id {parentId} not found.");
+                return NotFound($"Parent with id {request.ParentId} not found.");
             }
 
             parent.Children ??= new List<TreeNode>();
@@ -170,10 +169,14 @@ public class TreeController : ControllerBase {
     }
 
     public class ExtendTreeRequest {
-        public int? ParentId { get; set; }
-        public string Title { get; set; }
         [Required]
-        public int? Value { get; set; }
+        public int ParentId { get; set; }
+
+        [Required]
+        public string Title { get; set; }
+
+        [Required]
+        public int Value { get; set; }
     }
 }
 
