@@ -7,7 +7,7 @@ import { HttpClient } from "@angular/common/http";
   providedIn: 'root'
 })
 export class DataProviderService {
-  private static readonly _url = 'http://localhost:5000/api/tree';
+  private static readonly _url = 'http://localhost:8080/api/tree';
 
   constructor(private readonly _http: HttpClient) { }
 

@@ -46,9 +46,11 @@ export class AppComponent implements OnInit {
             ? combineLatest(childrenDtos.map((child: TreeNodeDto) => this.buildTreeNode$(child)))
             : of([] as TreeNode[]);
 
-        return combineLatest([this._highlight.isHighlighted(node.name), children$]).pipe(
+        return combineLatest([this._highlight.isHighlighted(node.title), children$]).pipe(
             map(([isHighlighted, children]: [boolean, TreeNode[]]) => ({
-                name: node.name,
+                id: node.id,
+                title: node.title,
+                value: node.value,
                 type: isNode ? TreeNodeType.Node : TreeNodeType.Leaf,
                 isHighlighted,
                 children,

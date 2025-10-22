@@ -3,7 +3,9 @@ import {TreeNodeType} from "./tree-node-type";
 
 export type TreeNode = {
     type: TreeNodeType
-    name: string;
+    id: string;
+    title: string;
+    value?: number;
     isHighlighted: boolean;
     children?: TreeNode[];
     injector: Injector;
