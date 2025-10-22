@@ -91,20 +91,6 @@ public class TreeController : ControllerBase {
                         new TreeNode { Id = 38, Title = "Books", Value = 200 },
                         new TreeNode { Id = 39, Title = "Software Licenses", Value = 300 }
                     ]
-                },
-                new TreeNode {
-                    Title = "Savings",
-                    Children = [
-                        new TreeNode { Title = "Emergency Fund", Value = 2000 },
-                        new TreeNode {
-                            Title = "Investments",
-                            Children = [
-                                new TreeNode { Title = "Stocks", Value = 1500 },
-                                new TreeNode { Title = "Crypto", Value = 500 }
-                            ]
-                        },
-                        new TreeNode { Title = "Retirement", Value = 1000 }
-                    ]
                 }
             ]
         };

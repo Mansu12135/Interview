@@ -1,8 +1,60 @@
 .element {
-    margin-left: 1rem;
+    margin-left: 0.75rem;
+    padding: 0.25rem 0.5rem;
     cursor: pointer;
+    border-left: 2px dashed var(--border-color, rgba(17, 24, 39, 0.12));
+    border-radius: 6px;
+    transition: background-color 120ms ease, box-shadow 120ms ease, transform 60ms ease;
 }
 
-.highlighted {
-    background-color: #614e0e63;
+.element:hover {
+    background-color: var(--hover-bg, rgba(17, 24, 39, 0.03));
+}
+
+/* Visual cue for node vs leaf */
+.element.node::before,
+.element.leaf::before {
+    display: inline-block;
+    margin-right: 0.35rem;
+    opacity: 0.55;
+}
+
+.element.node::before {
+    content: '▸';
+}
+
+.element.leaf::before {
+    content: '•';
+}
+
+/* Text container styling */
+.element strong,
+.element i {
+    display: inline-flex;
+    align-items: baseline;
+    gap: 0.35rem;
+}
+
+.title {
+    font-weight: 600;
+}
+
+.meta {
+    opacity: 1;
+    font-style: normal;
+}
+
+.id-badge {
+    font-size: 0.75em;
+    background-color: var(--badge-bg, rgba(255, 255, 255, 0.08));
+    padding: 0.05rem 0.35rem;
+    border-radius: 0.35rem;
+    line-height: 1;
+    opacity: 1;
+}
+
+/* Highlighted state */
+.element.highlighted {
+    background-color: var(--highlight-bg, rgba(99, 102, 241, 0.22)); /* higher-contrast tint */
+    box-shadow: inset 0 0 0 1px var(--highlight-border, rgba(129, 140, 248, 0.5));
 }

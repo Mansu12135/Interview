@@ -1,2 +1,45 @@
-main { font-family: Arial, Helvetica, sans-serif; padding: 1rem; }
-.error { color: #b00020; }
+main {
+    font-family: Arial, Helvetica, sans-serif;
+    padding: 1rem;
+}
+
+.app-header {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    padding: 0.75rem 0;
+    margin-bottom: 1rem;
+    background-color: var(--header-bg, rgba(15, 23, 42, 0.65));
+    -webkit-backdrop-filter: saturate(140%) blur(6px);
+    backdrop-filter: saturate(140%) blur(6px);
+    border-bottom: 1px solid var(--border-color, rgba(148, 163, 184, 0.24));
+    box-shadow: 0 1px 0 rgba(0, 0, 0, 0.15);
+}
+
+.app-title {
+    margin: 0 0 0 1rem;
+    font-size: clamp(1.25rem, 2vw + 1rem, 2rem);
+    font-weight: 800;
+    letter-spacing: 0.3px;
+    color: #cbd5e1; /* darker than previous #e5e7eb */
+    display: inline-block;
+    text-shadow: 0 1px 0 rgba(0, 0, 0, 0.6), 0 2px 6px rgba(0, 0, 0, 0.35);
+    position: relative;
+}
+
+.app-title::after {
+    content: "";
+    display: block;
+    position: absolute;
+    bottom: 0;
+    left: -10px;
+    right: -10px;
+    height: 2px;
+    border-radius: 999px;
+    background: linear-gradient(90deg, #64748b, #60a5fa, #6366f1);
+    opacity: 0.7;
+}
+
+.error {
+    color: #b00020;
+}

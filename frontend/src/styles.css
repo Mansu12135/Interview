@@ -1,4 +1,18 @@
-/* Global styles */
+:root {
+    --bg: #0f172a;
+    --text: #e5e7eb;
+    --muted-text: #cbd5e1;
+    --link: #93c5fd;
+    --link-hover: #bfdbfe;
+    --border-color: rgba(148, 163, 184, 0.24);
+    --hover-bg: rgba(148, 163, 184, 0.10);
+    --selection-bg: rgba(99, 102, 241, 0.32);
+    --selection-fg: #0b1220;
+    --badge-bg: rgba(255, 255, 255, 0.08);
+    --highlight-bg: rgba(99, 102, 241, 0.22);
+    --highlight-border: rgba(129, 140, 248, 0.5);
+}
+
 html, body {
     height: 100%;
 }
@@ -6,8 +20,28 @@ html, body {
 body {
     margin: 0;
     font-family: Arial, Helvetica, sans-serif;
+    background-color: var(--bg);
+    color: var(--text);
+    line-height: 1.55;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
 }
 
 * {
     box-sizing: border-box;
+}
+
+a {
+    color: var(--link);
+    text-decoration-color: rgba(147, 197, 253, 0.5);
+}
+
+a:hover {
+    color: var(--link-hover);
+    text-decoration-color: rgba(191, 219, 254, 0.7);
+}
+
+::selection {
+    background-color: var(--selection-bg);
+    color: var(--selection-fg);
 }

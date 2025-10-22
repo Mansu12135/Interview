@@ -14,9 +14,10 @@
 
 <ng-template #nodeTemplate let-node="node">
     <colored-content>
-        <div (click)="toggleNodeHighlighting(node.title, $event)" class="element">
-            <strong [class.highlighted]="node.isHighlighted">{{ node.title }}
-                <small>[{{ node.id }}]</small>
+        <div (click)="toggleNodeHighlighting(node.title, $event)" class="element node" [class.highlighted]="node.isHighlighted">
+            <strong>
+                <span class="title">{{ node.title }}</span>
+                <span class="id-badge">#{{ node.id }}</span>
             </strong>
             @for (child of node["children"]; track child.id) {
                 <ng-container [ngTemplateOutletContext]="{node: child}" [ngTemplateOutlet]="nodes"></ng-container>
@@ -27,9 +28,11 @@
 
 <ng-template #leafTemplate let-leaf="leaf">
     <colored-content>
-        <div (click)="toggleNodeHighlighting(leaf.title, $event)" class="element">
-            <i [class.highlighted]="leaf.isHighlighted">{{ leaf.title }} ({{ leaf.value }})
-                <small>[{{ leaf.id }}]</small>
+        <div (click)="toggleNodeHighlighting(leaf.title, $event)" class="element leaf" [class.highlighted]="leaf.isHighlighted">
+            <i>
+                <span class="title">{{ leaf.title }}</span>
+                <span class="meta">({{ leaf.value }})</span>
+                <span class="id-badge">#{{ leaf.id }}</span>
             </i>
         </div>
     </colored-content>
