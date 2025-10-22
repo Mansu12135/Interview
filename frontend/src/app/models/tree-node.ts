@@ -6,7 +6,7 @@ export type TreeNode = {
     id: number;
     title: string;
     value?: number;
-    isHighlighted: boolean;
+    isSelected: boolean;
     children?: TreeNode[];
     injector: Injector;
 }

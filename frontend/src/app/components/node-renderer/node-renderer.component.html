@@ -14,7 +14,8 @@
 
 <ng-template #nodeTemplate let-node="node">
     <colored-content>
-        <div (click)="toggleNodeHighlighting(node.id, $event)" class="element node" [class.highlighted]="node.isHighlighted">
+        <div (click)="toggleNodeSelecting(node.id, $event)" [class.selected]="node.isSelected"
+             class="element node">
             <strong>
                 <span class="title">{{ node.title }}</span>
                 <span class="id-badge">#{{ node.id }}</span>
@@ -28,7 +29,8 @@
 
 <ng-template #leafTemplate let-leaf="leaf">
     <colored-content>
-        <div (click)="toggleNodeHighlighting(leaf.id, $event)" class="element leaf" [class.highlighted]="leaf.isHighlighted">
+        <div (click)="toggleNodeSelecting(leaf.id, $event)" [class.selected]="leaf.isSelected"
+             class="element leaf">
             <i>
                 <span class="title">{{ leaf.title }}</span>
                 <span class="meta">({{ leaf.value }})</span>

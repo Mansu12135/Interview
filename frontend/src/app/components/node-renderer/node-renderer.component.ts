@@ -2,7 +2,7 @@ import {Component, Input} from '@angular/core';
 import {TreeNode} from "../../models/tree-node";
 import {NgTemplateOutlet} from "@angular/common";
 import {TreeNodeType} from "../../models/tree-node-type";
-import {HighlightService} from "../../highlight.service";
+import {SelectionService} from "../../selection.service";
 import {ColoredContent} from "../colored-content/colored-content";
 
 @Component({
@@ -20,11 +20,11 @@ export class NodeRendererComponent {
 
     protected readonly TreeNodeType = TreeNodeType;
 
-    constructor(private readonly _highlight: HighlightService) {
+    constructor(private readonly _selection: SelectionService) {
     }
 
-    toggleNodeHighlighting(id: number, e: PointerEvent) {
-        this._highlight.toggle(id);
+    toggleNodeSelecting(id: number, e: PointerEvent) {
+        this._selection.toggle(id);
         e.stopPropagation();
     }
 }

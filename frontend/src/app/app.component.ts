@@ -6,7 +6,7 @@ import {TreeNode} from "./models/tree-node";
 import {DataProviderService} from "./data-provider.service";
 import {TreeNodeType} from "./models/tree-node-type";
 import {NodeRendererComponent} from "./components/node-renderer/node-renderer.component";
-import {HighlightService} from "./highlight.service";
+import {SelectionService} from "./selection.service";
 import {ColorService} from "./color.service";
 import {COLOR} from "./tokens/color.token";
 import {FormsModule} from "@angular/forms";
@@ -29,12 +29,12 @@ export class AppComponent implements OnInit {
     extendValue: number | null = null;
     extending$ = new BehaviorSubject<boolean>(false);
 
-    // Expose highlighted id to the template
-    highlightedId$ = this._highlight.getHighlightedId();
+    // Expose selected id to the template
+    selectedId$ = this._selection.getSelectedId();
 
     constructor(
         private readonly _dataProvider: DataProviderService,
-        private readonly _highlight: HighlightService,
+        private readonly _selection: SelectionService,
         private readonly _color: ColorService,
         private readonly injector: Injector
     ) {
@@ -91,13 +91,13 @@ export class AppComponent implements OnInit {
             ? combineLatest(childrenDtos.map((child: TreeNodeDto) => this.buildTreeNode$(child)))
             : of([] as TreeNode[]);
 
-        return combineLatest([this._highlight.isHighlighted(node.id), children$]).pipe(
-            map(([isHighlighted, children]: [boolean, TreeNode[]]) => ({
+        return combineLatest([this._selection.isSelected(node.id), children$]).pipe(
+            map(([isSelected, children]: [boolean, TreeNode[]]) => ({
                 id: node.id,
                 title: node.title,
                 value: node.value,
                 type: isNode ? TreeNodeType.Node : TreeNodeType.Leaf,
-                isHighlighted,
+                isSelected: isSelected,
                 children,
                 injector: Injector.create({
                     parent: this.injector,

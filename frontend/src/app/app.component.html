@@ -2,7 +2,7 @@
     <header class="app-header">
         <div class="header-inner">
             <h1 class="app-title">{{ title }}</h1>
-            @let selectedId = highlightedId$ | async;
+            @let selectedId = selectedId$ | async;
             <form (submit)="onExtend(selectedId); $event.preventDefault()" class="extend-form">
                 <label>
                     Title
