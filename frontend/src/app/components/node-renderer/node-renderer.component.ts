@@ -23,8 +23,8 @@ export class NodeRendererComponent {
     constructor(private readonly _highlight: HighlightService) {
     }
 
-    toggleNodeHighlighting(name: string, e: PointerEvent) {
-        this._highlight.toggle(name);
+    toggleNodeHighlighting(id: number, e: PointerEvent) {
+        this._highlight.toggle(id);
         e.stopPropagation();
     }
 }

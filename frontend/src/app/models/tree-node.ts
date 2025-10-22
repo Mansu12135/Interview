@@ -3,7 +3,7 @@ import {TreeNodeType} from "./tree-node-type";
 
 export type TreeNode = {
     type: TreeNodeType
-    id: string;
+    id: number;
     title: string;
     value?: number;
     isHighlighted: boolean;

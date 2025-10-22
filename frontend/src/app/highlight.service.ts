@@ -5,28 +5,24 @@ import {BehaviorSubject, Observable, map, distinctUntilChanged} from 'rxjs';
     providedIn: 'root'
 })
 export class HighlightService {
-    private readonly _highlightedNodesSubject$ = new BehaviorSubject<Set<string>>(new Set<string>());
+    // Maintain a single highlighted id at a time (null means no selection)
+    private readonly _selectedId$ = new BehaviorSubject<number | null>(null);
 
-    // Observable that emits whether a node is currently highlighted
-    public isHighlighted(name: string): Observable<boolean> {
-        return this._highlightedNodesSubject$.pipe(
-            map(set => set.has(name)),
+    // Observable that emits whether the provided id is currently highlighted (single-selection)
+    public isHighlighted(id: number): Observable<boolean> {
+        return this._selectedId$.pipe(
+            map(selectedId => selectedId === id),
             distinctUntilChanged()
         );
     }
 
-    public toggle(name: string): void {
-        const current = this._highlightedNodesSubject$.value;
-        const next = new Set(current);
-        if (next.has(name)) {
-            next.delete(name);
-        } else {
-            next.add(name);
-        }
-        this._highlightedNodesSubject$.next(next);
+    // Toggle highlighting: if clicking the same id -> unselect; otherwise select the new id (replacing previous)
+    public toggle(id: number): void {
+        const current = this._selectedId$.value;
+        this._selectedId$.next(current === id ? null : id);
     }
 
     public clear(): void {
-        this._highlightedNodesSubject$.next(new Set<string>());
+        this._selectedId$.next(null);
     }
 }
